@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
-import '../util/my_box.dart';
 import '../util/my_tile.dart';
 
 class DesktopScaffold extends StatefulWidget {
@@ -11,6 +10,30 @@ class DesktopScaffold extends StatefulWidget {
 }
 
 class _DesktopScaffoldState extends State<DesktopScaffold> {
+  
+  // 1. FUNCIÓN DE BOTONES (Debe estar AQUÍ, dentro de la clase pero fuera del build)
+  Widget botonColorido(String texto, Color colorBorde) {
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: OutlinedButton(
+        onPressed: () {},
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: colorBorde, width: 2),
+          shape: const StadiumBorder(),
+          backgroundColor: Colors.white,
+        ),
+        child: Text(
+          texto,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,43 +42,49 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Menú lateral (Drawer fijo en escritorio)
+          // Menú lateral fijo
           myDrawer,
 
-          // 2. Cuerpo principal
+          // Cuerpo principal
           Expanded(
-            flex: 3, // Ocupa más espacio
+            flex: 3,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  // Primera mitad: Cuadrícula de 4 productos
-                  AspectRatio(
-                    aspectRatio: 4,
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: GridView.builder(
-                        itemCount: 4,
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 4,
-                        ),
-                        itemBuilder: (context, index) {
-                          return const MyBox();
-                        },
-                      ),
+                  const SizedBox(height: 10),
+                  const Text("Menú de Operaciones", 
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 10),
+
+                  // Rejilla de botones ovalados
+                  SizedBox(
+                    height: 220, 
+                    child: GridView.count(
+                      crossAxisCount: 4, 
+                      childAspectRatio: 2.8,
+                      children: [
+                        botonColorido("Ingreso", Colors.red),
+                        botonColorido("Salida", Colors.green),
+                        botonColorido("Verificación", Colors.orange),
+                        botonColorido("Buscar", Colors.cyan),
+                        botonColorido("Comentarios", Colors.yellow[700]!),
+                        botonColorido("Parqueadero", Colors.purple),
+                        botonColorido("Facturación", Colors.brown),
+                        botonColorido("Cédula", Colors.blue),
+                        botonColorido("Horarios", Colors.pink),
+                        botonColorido("Contratiempos", Colors.lightGreen),
+                      ],
                     ),
                   ),
 
-                  // Segunda mitad: Información y publicidad
+                  const Divider(),
+
+                  // Lista de información inferior
                   Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        itemCount: 7,
-                        itemBuilder: (context, index) {
-                          return const MyTile(); // Información de productos
-                        },
-                      ),
+                    child: ListView.builder(
+                      itemCount: 5,
+                      itemBuilder: (context, index) => const MyTile(),
                     ),
                   ),
                 ],
@@ -63,35 +92,50 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
             ),
           ),
 
-          // 3. Compartimiento lateral (Imágenes Publicitarias)
+          // Panel derecho de accesos directos
           Expanded(
-            flex: 1, // Ocupa menos espacio
+            flex: 1,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  // 🎯 Reto: 2 imágenes publicitarias en los compartimientos laterales
-                  // Espacio para la primera imagen publicitaria
+                  const Text("Accesos Rápidos", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 20),
+                  
+                  // Botón grande de Ingreso
                   Expanded(
                     child: Container(
+                      width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[200],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(color: Colors.green, width: 2),
                       ),
-                      margin: const EdgeInsets.only(bottom: 8.0),
-                      child: const Center(child: Text("Ingreso")),
+                      child: const Center(
+                        child: Text("INGRESO", 
+                          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
                     ),
                   ),
-                  // Espacio para la segunda imagen publicitaria
+                  
+                  const SizedBox(height: 20),
+
+                  // Botón grande de Salida
                   Expanded(
                     child: Container(
+                      width: double.infinity,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.grey[200],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(color: Colors.red, width: 2),
                       ),
-                      child: const Center(child: Text("Salida")),
+                      child: const Center(
+                        child: Text("SALIDA", 
+                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18)),
+                      ),
                     ),
                   ),
+                  const SizedBox(height: 20),
                 ],
               ),
             ),

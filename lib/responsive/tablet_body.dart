@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
-import '../util/my_box.dart';
 import '../util/my_tile.dart';
 
 class TabletScaffold extends StatefulWidget {
@@ -11,41 +10,56 @@ class TabletScaffold extends StatefulWidget {
 }
 
 class _TabletScaffoldState extends State<TabletScaffold> {
+  Widget botonColorido(String texto, Color colorBorde) {
+    return Padding(
+      padding: const EdgeInsets.all(6.0),
+      child: OutlinedButton(
+        onPressed: () {},
+        style: OutlinedButton.styleFrom(
+          side: BorderSide(color: colorBorde, width: 2),
+          shape: const StadiumBorder(),
+          backgroundColor: Colors.white,
+        ),
+        child: Text(texto, style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: defaultBackgroundColor,
       appBar: myAppBar,
       drawer: myDrawer,
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            // 1. Los primeros 4 boxes en grid (Fotos de Productos)
-            AspectRatio(
-              aspectRatio: 4, // Proporción más ancha para la cuadrícula superior
-              child: SizedBox(
-                width: double.infinity,
-                child: GridView.builder(
-                  itemCount: 4,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4, // 4 columnas en tableta para optimizar espacio
-                  ),
-                  itemBuilder: (context, index) {
-                    return const MyBox();
-                  },
-                ),
-              ),
+            const SizedBox(height: 10),
+            const Text("Menú de Operaciones", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 3, 
+              childAspectRatio: 3.5,
+              children: [
+                botonColorido("Ingreso", Colors.red),
+                botonColorido("Salida", Colors.green),
+                botonColorido("Verificación", Colors.orange),
+                botonColorido("Buscar", Colors.cyan),
+                botonColorido("Comentarios", Colors.yellow[700]!),
+                botonColorido("Parqueadero", Colors.purple),
+                botonColorido("Facturación", Colors.brown),
+                botonColorido("Cédula", Colors.blue),
+                botonColorido("Horarios", Colors.pink),
+                botonColorido("Contratiempos", Colors.lightGreen),
+              ],
             ),
-
-            // 2. Lista de información de productos (en los espacios debajo)
-            Expanded(
-              child: ListView.builder(
-                itemCount: 6,
-                itemBuilder: (context, index) {
-                  return const MyTile();
-                },
-              ),
+            const Divider(),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: 5, 
+              itemBuilder: (context, index) => const MyTile()
             ),
           ],
         ),
