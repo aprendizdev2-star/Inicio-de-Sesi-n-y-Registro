@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// Importaciones de tu estructura responsive
+import 'responsive/desktop_body.dart';
+import 'responsive/tablet_body.dart';
+import 'responsive/mobil_body.dart';
+import 'responsive/responsive_layout.dart';
+
 class RegisterPage extends StatefulWidget {
   final String initialEmail;
   const RegisterPage({Key? key, required this.initialEmail}) : super(key: key);
@@ -19,7 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   String? selectedRol;
   final List<String> roles = ['usuario', 'facturacion', 'administrador'];
-
+  
   @override
   void initState() {
     super.initState();
@@ -37,20 +43,25 @@ class _RegisterPageState extends State<RegisterPage> {
             padding: const EdgeInsets.all(40.0),
             child: Column(
               children: [
-                Text('Creación de cuenta', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.red)),
+                const Text('Creación de cuenta', 
+                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.red)),
                 const SizedBox(height: 40),
 
-                _buildInputField("Nombre", "Nombre completo", nameController, [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))]),
+                _buildInputField("Nombre", "Nombre completo", nameController, 
+                  [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))]),
                 
-                // CAMBIO: Ahora readOnly es false para que se pueda editar
                 _buildInputField("Correo", "email@equitel.com.co", emailController, null, readOnly: false), 
                 
-                _buildInputField("Cédula", "Número de identificación", idController, [FilteringTextInputFormatter.digitsOnly]),
-                _buildInputField("Teléfono", "Número de contacto", phoneController, [FilteringTextInputFormatter.digitsOnly]),
-                _buildInputField("Empresa", "Nombre de la empresa", companyController, [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))]),
+                _buildInputField("Cédula", "Número de identificación", idController, 
+                  [FilteringTextInputFormatter.digitsOnly]),
+                _buildInputField("Teléfono", "Número de contacto", phoneController, 
+                  [FilteringTextInputFormatter.digitsOnly]),
+                _buildInputField("Empresa", "Nombre de la empresa", companyController, 
+                  [FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z\s]'))]),
                 _buildInputField("Placa del Vehículo", "ABC-123", plateController, null),
 
-                const Align(alignment: Alignment.centerLeft, child: Text("Rol", style: TextStyle(fontWeight: FontWeight.bold))),
+                const Align(alignment: Alignment.centerLeft, 
+                  child: Text("Rol", style: TextStyle(fontWeight: FontWeight.bold))),
                 const SizedBox(height: 5),
                 DropdownButtonFormField<String>(
                   value: selectedRol,
@@ -66,14 +77,29 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 50,
                   child: ElevatedButton(
                     onPressed: () {
-                      // Validación rápida antes de finalizar
-                      if (!emailController.text.contains('@')) {
-                        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("El correo editado debe ser válido")));
+                      if (nameController.text.isEmpty || selectedRol == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Por favor completa el nombre y el rol"))
+                        );
                       } else {
-                        Navigator.pop(context); // Regresa al login o puedes ir al Dashboard
+                        // NAVEGACIÓN LIMPIA: Elimina el botón de retroceso (flecha blanca)
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ResponsiveLayout(
+                              mobileBody: MobileScaffold(), 
+                              tabletBody: TabletScaffold(), 
+                              desktopBody: DesktopScaffold(),
+                            ),
+                          ),
+                          (route) => false, // Elimina todas las rutas previas
+                        );
                       }
                     },
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.black, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black, 
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
+                    ),
                     child: const Text('Crear Cuenta', style: TextStyle(color: Colors.white)),
                   ),
                 ),
@@ -85,7 +111,8 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 
-  Widget _buildInputField(String label, String hint, TextEditingController controller, List<TextInputFormatter>? formatters, {bool readOnly = false}) {
+  Widget _buildInputField(String label, String hint, TextEditingController controller, 
+      List<TextInputFormatter>? formatters, {bool readOnly = false}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: Column(

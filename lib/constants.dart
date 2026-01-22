@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'login_page.dart'; // Importa tu login para poder volver
 
-// --- CONSTANTES DE COLOR ---
-// Color de fondo para las áreas principales
 var defaultBackgroundColor = const Color.fromARGB(255, 255, 255, 255); 
-
-// Color de la barra superior (AppBar) - Un azul oscuro profesional
 var appBarColor = const Color.fromARGB(255, 231, 10, 10); 
 
 var myAppBar = AppBar(
   backgroundColor: appBarColor,
+  automaticallyImplyLeading: false, // ¡ESTO ELIMINA LA FLECHA BLANCA!
   title: const Text(
     "Entrada y Salida de vehículos",
     style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
   ),
   centerTitle: true,
-  iconTheme: const IconThemeData(color: Colors.white), // Hace que el icono del menú sea blanco
+  // Mantenemos el icono del menú solo si es necesario (en móvil/tablet)
+  leading: Builder(
+    builder: (context) => IconButton(
+      icon: const Icon(Icons.menu, color: Colors.white),
+      onPressed: () => Scaffold.of(context).openDrawer(),
+    ),
+  ),
 );
 
 var drawerTextColor = const TextStyle(
@@ -24,52 +28,53 @@ var drawerTextColor = const TextStyle(
 
 var tilePadding = const EdgeInsets.only(left: 16.0, right: 16.0, top: 10.0);
 
-// --- EL DRAWER (MENÚ LATERAL) ---
 var myDrawer = Drawer(
-  backgroundColor: Colors.white, // Fondo blanco para que resalte
+  backgroundColor: Colors.white,
   elevation: 0,
   child: Column(
     children: [
       const DrawerHeader(
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 245, 245, 245), // Fondo sutil para el encabezado
-        ),
+        decoration: BoxDecoration(color: Color.fromARGB(255, 245, 245, 245)),
         child: Center(
           child: CircleAvatar(
             radius: 50,
             backgroundColor: Colors.blueAccent,
-            // Reemplaza el Icon por esta línea cuando tengas tu imagen:
-            // backgroundImage: AssetImage('assets/tu_foto.png'), 
-            child: Icon(
-              Icons.person, // Icono de usuario por defecto
-              size: 50,
-              color: Colors.white,
-            ),
+            child: Icon(Icons.person, size: 50, color: Colors.white),
           ),
         ),
       ),
       
-      // Items del menú
-      createDrawerItem(Icons.home, 'M E N U'),
-      createDrawerItem(Icons.settings, 'CO N F I G U R A C I O N'),
-      createDrawerItem(Icons.info, 'N O T I C I A S'),
-      const Spacer(), // Empuja el Logout hacia abajo
-      createDrawerItem(Icons.logout, 'S A L I R'),
+      createDrawerItem(Icons.home, 'M E N U', null),
+      createDrawerItem(Icons.settings, 'CO N F I G U R A C I O N', null),
+      createDrawerItem(Icons.info, 'N O T I C I A S', null),
+      const Spacer(),
+      
+      // BOTÓN SALIR CONFIGURADO
+      Builder(
+        builder: (context) => createDrawerItem(
+          Icons.logout, 
+          'S A L I R', 
+          () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => LoginPage()),
+              (route) => false,
+            );
+          }
+        ),
+      ),
       const SizedBox(height: 20),
     ],
   ),
 );
 
-// Función para no repetir código en cada item del menú
-Widget createDrawerItem(IconData icon, String text) {
+Widget createDrawerItem(IconData icon, String text, VoidCallback? onTapAction) {
   return Padding(
     padding: tilePadding,
     child: ListTile(
       leading: Icon(icon, color: Colors.blueGrey),
       title: Text(text, style: drawerTextColor),
-      onTap: () {
-        // Aquí puedes agregar la navegación después
-      },
+      onTap: onTapAction,
     ),
   );
 }

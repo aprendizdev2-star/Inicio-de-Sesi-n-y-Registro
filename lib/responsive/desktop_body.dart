@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../constants.dart';
 import '../util/my_tile.dart';
+import '../horarios_page.dart';
 
 class DesktopScaffold extends StatefulWidget {
   const DesktopScaffold({Key? key}) : super(key: key);
@@ -11,12 +12,11 @@ class DesktopScaffold extends StatefulWidget {
 
 class _DesktopScaffoldState extends State<DesktopScaffold> {
   
-  // 1. FUNCIÓN DE BOTONES (Debe estar AQUÍ, dentro de la clase pero fuera del build)
-  Widget botonColorido(String texto, Color colorBorde) {
+  Widget botonColorido(String texto, Color colorBorde, VoidCallback onTap) {
     return Padding(
       padding: const EdgeInsets.all(6.0),
       child: OutlinedButton(
-        onPressed: () {},
+        onPressed: onTap,
         style: OutlinedButton.styleFrom(
           side: BorderSide(color: colorBorde, width: 2),
           shape: const StadiumBorder(),
@@ -24,6 +24,7 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
         ),
         child: Text(
           texto,
+          textAlign: TextAlign.center,
           style: const TextStyle(
             color: Colors.black87,
             fontWeight: FontWeight.bold,
@@ -42,10 +43,8 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Menú lateral fijo
           myDrawer,
 
-          // Cuerpo principal
           Expanded(
             flex: 3,
             child: Padding(
@@ -53,34 +52,41 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
               child: Column(
                 children: [
                   const SizedBox(height: 10),
-                  const Text("Menú de Operaciones", 
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Menú de Operaciones", 
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+                  ),
                   const SizedBox(height: 10),
 
-                  // Rejilla de botones ovalados
-                  SizedBox(
-                    height: 220, 
+                  // CAMBIO: Quitamos el SizedBox de altura fija y usamos Flexible
+                  Flexible(
                     child: GridView.count(
+                      shrinkWrap: true, // Permite que el grid ocupe solo el espacio necesario
                       crossAxisCount: 4, 
                       childAspectRatio: 2.8,
+                      physics: const ClampingScrollPhysics(), // Evita conflictos de scroll
                       children: [
-                        botonColorido("Ingreso", Colors.red),
-                        botonColorido("Salida", Colors.green),
-                        botonColorido("Verificación", Colors.orange),
-                        botonColorido("Buscar", Colors.cyan),
-                        botonColorido("Comentarios", Colors.yellow[700]!),
-                        botonColorido("Parqueadero", Colors.purple),
-                        botonColorido("Facturación", Colors.brown),
-                        botonColorido("Cédula", Colors.blue),
-                        botonColorido("Horarios", Colors.pink),
-                        botonColorido("Contratiempos", Colors.lightGreen),
+                        botonColorido("Ingreso", Colors.green, () {}),
+                        botonColorido("Salida", Colors.red, () {}),
+                        botonColorido("Verificación", Colors.orange, () {}),
+                        botonColorido("Buscar", Colors.cyan, () {}),
+                        botonColorido("Comentarios", Colors.yellow[700]!, () {}),
+                        botonColorido("Parqueadero", Colors.purple, () {}),
+                        botonColorido("Facturación", Colors.brown, () {}),
+                        botonColorido("Cédula", Colors.blue, () {}),
+                        botonColorido("Horarios", Colors.pink, () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HorariosPage()),
+                          );
+                        }),
+                        botonColorido("Contratiempos", Colors.lightGreen, () {}),
                       ],
                     ),
                   ),
 
                   const Divider(),
 
-                  // Lista de información inferior
                   Expanded(
                     child: ListView.builder(
                       itemCount: 5,
@@ -92,7 +98,6 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
             ),
           ),
 
-          // Panel derecho de accesos directos
           Expanded(
             flex: 1,
             child: Padding(
@@ -101,46 +106,34 @@ class _DesktopScaffoldState extends State<DesktopScaffold> {
                 children: [
                   const Text("Accesos Rápidos", style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 20),
-                  
-                  // Botón grande de Ingreso
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.green, width: 2),
-                      ),
-                      child: const Center(
-                        child: Text("INGRESO", 
-                          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                    ),
-                  ),
-                  
+                  _buildQuickAccessButton("INGRESO", Colors.green),
                   const SizedBox(height: 20),
-
-                  // Botón grande de Salida
-                  Expanded(
-                    child: Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: Colors.red, width: 2),
-                      ),
-                      child: const Center(
-                        child: Text("SALIDA", 
-                          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 18)),
-                      ),
-                    ),
-                  ),
+                  _buildQuickAccessButton("SALIDA", Colors.red),
                   const SizedBox(height: 20),
                 ],
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuickAccessButton(String label, Color color) {
+    return Expanded(
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(color: color, width: 2),
+        ),
+        child: Center(
+          child: Text(
+            label, 
+            style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 18)
+          ),
+        ),
       ),
     );
   }
